@@ -63,71 +63,122 @@ WHO_subset <- WHO %>% filter(country %in% c("Afghanistan", "Albania", "Algeria")
 Read the Species and Surveys data sets using an appropriate function. Name these data frames as `species` and `surveys`, respectively.
 
 ```{r}
-
 # This is an R chunk for reading the Species and Surveys data sets. Provide your R codes here:
-
-
-
-
+species <- read_csv("species.csv")
+surveys <- read_csv("surveys.csv")
 ```
 
+Message: Parsed with column specification ??? (meaning?)
 
+## Task 6: Join
 
+### Exploring the Data
+```{r}
+dim(species)
+```
+```{r}
+dim(surveys)
+```
+```{r}
+str(species)
+summary(species)
+```
 
-## Task 6: Join  
+```{r}
+str(surveys)
+summary(surveys)
+```
+
 
 Combine `surveys` and `species` data frames using the key variable `species_id`. For this task, you need to add the species information (`genus`, `species`, `taxa`) to the `surveys` data.  Rename the combined data frame as `surveys_combined`.
 
 ```{r}
-# Importing the Packages
-
-```
-
-```{r}
-# Loading the Datasets
-WHO <- read_csv("WHO.csv")
-```
-
-
-
-
-
-```{r}
-
 # This is a chunk for Task 6. Provide your R codes here: 
-
-
-
-
-
+surveys_combined <- full_join(species, surveys, by = "species_id")
 ```
-
-
 
 ## Task 7: Calculate 
 
 Using the `surveys_combined` data frame, calculate the average weight and hindfoot length of one of the species observed in each month (irrespective of the year). Make sure to exclude missing values while calculating the average.
 
-
 ```{r}
-
 # This is a chunk for Task 7. Provide your R codes here: 
-
-
-
-
 
 ```
 
+```{r}
+# Check the species ID
+unique(surveys_combined$species_id)
+```
 
+```{r}
+# Randomly choose DS
+# Made this into a dataset
+DS <- subset(surveys_combined, surveys_combined$species_id == "DS")
+```
+
+```{r}
+str(DS)
+```
+
+```{r}
+DS$year <- factor(DS$year)
+```
+
+```{r}
+str(DS$year)
+```
+
+```{r}
+# Create a vector of NAs
+is.na(DS$hindfoot_length)
+
+mean(x, na.rm = TRUE)
+
+```
+
+```{r}
+mean(DS$hindfoot_length, na.rm = TRUE)
+```
+
+```{r}
+mean(DS$hindfoot_length)
+```
+
+```{r}
+aggregate(DS$hindfoot_length ~ year, DS, mean, na.action = na.omit)
+```
+
+```{r}
+aggregate(DS$hindfoot_length ~ year, DS, mean)
+```
+
+```{r}
+DS$month <- factor(DS$month)
+```
+
+```{r}
+str(DS$month)
+```
+
+```{r}
+aggregate(DS$hindfoot_length ~ month, DS, mean, na.action = na.omit)
+```
+
+```{r}
+aggregate(DS$hindfoot_length ~ month, DS, mean)
+```
+
+```{r}
+month1 <- subset(DS, DS$month == "1")
+mean(month1$hindfoot_length, na.rm = TRUE)
+```
 
 ## Task 8: Missing Values
 
 Select one of the years in the `surveys_combined` data frame, rename this data set as `surveys_combined_year`. Using `surveys_combined_year` data frame, find the total missing values in `weight` column grouped by `species`. Replace the missing values in `weight` column with the mean values of each species. Save this imputed data as `surveys_weight_imputed`.
 
-
 ```{r}
-
 # This is a chunk for Task 8. Provide your R codes here: 
 
 
