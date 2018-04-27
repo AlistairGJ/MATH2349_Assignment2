@@ -1,0 +1,159 @@
+---
+title: "MATH2349 Semester 1, 2018"
+author: "Chris Kaias s3090801 & Alistair Grevis-James s##"
+subtitle: Assignment 2
+output:
+  html_notebook: default
+---
+
+
+
+## Setup
+
+Install and load the necessary packages to reproduce the report here:
+
+```{r, echo = TRUE, message=FALSE}
+library(readr)
+library(tidyr)
+library(dplyr)
+##library(Hmisc)
+##library(outliers)
+```
+
+## Read WHO Data
+Read the WHO data using an appropriate function.
+
+```{r}
+WHO <- read_csv("WHO.csv")
+```
+
+## Tidy Task 1:
+```{r, echo=TRUE}
+WHO <- WHO %>% gather(code, value, 5:60)
+```
+
+## Tidy Task 2:
+```{r}
+WHO <- WHO %>% separate(code, into = c("new", "var", "sex"), sep = "_")
+WHO <- WHO %>% separate(sex, into = c("sex","age"), sep = 1)
+```
+
+## Tidy Task 3:
+```{r}
+WHO <- WHO %>% spread(var, value)
+```
+
+## Tidy Task 4: 
+```{r}
+WHO <- WHO %>% mutate(age = factor(age, levels=c("014","1524","2534","3544","4554","5564","65"), labels=c("<15","15-24","25-34","35-44","45-54","55-64","65>="), ordered=TRUE))
+WHO <- WHO %>% mutate(sex = factor(sex))
+```
+
+## Task 5: Filter & Select
+Drop the redundant columns `iso2` and `new`, and filter any three countries from the tidy version of the WHO data set. Name this subset of the data frame as `WHO_subset`.
+
+```{r}
+WHO_subset <- WHO %>% filter(country %in% c("Afghanistan", "Albania", "Algeria")) %>% select(-(iso2),-(new))
+```
+
+
+
+## Read Species and Surveys data sets
+
+Read the Species and Surveys data sets using an appropriate function. Name these data frames as `species` and `surveys`, respectively.
+
+```{r}
+
+# This is an R chunk for reading the Species and Surveys data sets. Provide your R codes here:
+
+
+
+
+```
+
+
+
+
+## Task 6: Join  
+
+Combine `surveys` and `species` data frames using the key variable `species_id`. For this task, you need to add the species information (`genus`, `species`, `taxa`) to the `surveys` data.  Rename the combined data frame as `surveys_combined`.
+
+
+```{r}
+
+# This is a chunk for Task 6. Provide your R codes here: 
+
+
+
+
+
+```
+
+
+
+## Task 7: Calculate 
+
+Using the `surveys_combined` data frame, calculate the average weight and hindfoot length of one of the species observed in each month (irrespective of the year). Make sure to exclude missing values while calculating the average.
+
+
+```{r}
+
+# This is a chunk for Task 7. Provide your R codes here: 
+
+
+
+
+
+```
+
+
+
+## Task 8: Missing Values
+
+Select one of the years in the `surveys_combined` data frame, rename this data set as `surveys_combined_year`. Using `surveys_combined_year` data frame, find the total missing values in `weight` column grouped by `species`. Replace the missing values in `weight` column with the mean values of each species. Save this imputed data as `surveys_weight_imputed`.
+
+
+```{r}
+
+# This is a chunk for Task 8. Provide your R codes here: 
+
+
+
+
+
+```
+
+
+
+
+
+## Task 9: Inconsistencies or Special Values
+
+Inspect the `weight` column in `surveys_weight_imputed` data frame for any further inconsistencies or special values (i.e., NaN, Inf, -Inf) . Trace back and explain briefly why you got such a value.
+
+```{r}
+
+# This is a chunk for Task 9. Provide your R codes here: 
+
+
+```
+
+
+
+
+## Task 10: Outliers
+
+Using the `surveys_combined` data frame, inspect the variable hindfoot length for possible univariate outliers. If you detect any outliers use any of the methods outlined in the Module 6 notes to deal with them. Explain briefly the actions that you take to handle outliers. 
+
+```{r}
+
+# This is a chunk for Task 10. Provide your R codes here: 
+
+
+```
+
+
+
+
+<br>
+<br>
