@@ -1,6 +1,6 @@
 ---
 title: "MATH2349 Semester 1, 2018"
-author: "Chris Kaias s3090801 & Alistair Grevis-James s##"
+author: "Ch#"
 subtitle: Assignment 2
 output:
   html_notebook: default
@@ -77,6 +77,19 @@ Read the Species and Surveys data sets using an appropriate function. Name these
 ## Task 6: Join  
 
 Combine `surveys` and `species` data frames using the key variable `species_id`. For this task, you need to add the species information (`genus`, `species`, `taxa`) to the `surveys` data.  Rename the combined data frame as `surveys_combined`.
+
+```{r}
+# Importing the Packages
+
+```
+
+```{r}
+# Loading the Datasets
+WHO <- read_csv("WHO.csv")
+```
+
+
+
 
 
 ```{r}
