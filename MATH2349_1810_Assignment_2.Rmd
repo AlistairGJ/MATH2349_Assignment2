@@ -63,6 +63,15 @@ WHO_subset <- WHO %>% filter(country %in% c("Afghanistan", "Albania", "Algeria")
 Read the Species and Surveys data sets using an appropriate function. Name these data frames as `species` and `surveys`, respectively.
 
 ```{r}
+library(kableExtra)
+library(knitr)
+```
+
+```{r}
+options(knitr.table.format = "html")
+```
+
+```{r}
 # This is an R chunk for reading the Species and Surveys data sets. Provide your R codes here:
 species <- read_csv("species.csv")
 surveys <- read_csv("surveys.csv")
@@ -88,7 +97,6 @@ summary(species)
 str(surveys)
 summary(surveys)
 ```
-
 
 Combine `surveys` and `species` data frames using the key variable `species_id`. For this task, you need to add the species information (`genus`, `species`, `taxa`) to the `surveys` data.  Rename the combined data frame as `surveys_combined`.
 
@@ -121,13 +129,6 @@ DS <- subset(surveys_combined, surveys_combined$species_id == "DS")
 str(DS)
 ```
 
-```{r}
-DS$year <- factor(DS$year)
-```
-
-```{r}
-str(DS$year)
-```
 
 ```{r}
 # Create a vector of NAs
@@ -137,21 +138,6 @@ mean(x, na.rm = TRUE)
 
 ```
 
-```{r}
-mean(DS$hindfoot_length, na.rm = TRUE)
-```
-
-```{r}
-mean(DS$hindfoot_length)
-```
-
-```{r}
-aggregate(DS$hindfoot_length ~ year, DS, mean, na.action = na.omit)
-```
-
-```{r}
-aggregate(DS$hindfoot_length ~ year, DS, mean)
-```
 
 ```{r}
 DS$month <- factor(DS$month)
@@ -162,11 +148,32 @@ str(DS$month)
 ```
 
 ```{r}
-aggregate(DS$hindfoot_length ~ month, DS, mean, na.action = na.omit)
+DS_WeightByMonth <- aggregate(DS$weight ~ month, DS, mean, na.action = na.omit)
 ```
 
 ```{r}
-aggregate(DS$hindfoot_length ~ month, DS, mean)
+kable(DS_WeightByMonth, col.names = c('Month', 'Average Weight'), align = rep('c')) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  column_spec(1, bold = TRUE, border_right = TRUE, width = "5em") %>%
+  column_spec(2, width = "10em")
+```
+
+```{r}
+DS_HFLenghtByMonth <- aggregate(DS$hindfoot_length ~ month, DS, mean, na.action = na.omit)
+```
+
+```{r}
+kable(DS_HFLenghtByMonth, col.names = c('Month', 'Average Hindfoot Length'), align = rep('c')) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  column_spec(1, bold = TRUE, border_right = TRUE, width = "5em") %>%
+  column_spec(2, width = "10em")
+```
+
+
+
+
+```{r}
+
 ```
 
 ```{r}
@@ -214,6 +221,19 @@ Using the `surveys_combined` data frame, inspect the variable hindfoot length fo
 # This is a chunk for Task 10. Provide your R codes here: 
 
 
+```
+
+
+
+
+
+
+```{r}
+DS$year <- factor(DS$year)
+```
+
+```{r}
+str(DS$year)
 ```
 
 
