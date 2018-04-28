@@ -24,36 +24,36 @@ library(dplyr)
 Read the WHO data using an appropriate function.
 
 ```{r}
-WHO <- read_csv("WHO.csv")
+#WHO <- read_csv("WHO.csv")
 ```
 
 ## Tidy Task 1:
 ```{r, echo=TRUE}
-WHO <- WHO %>% gather(code, value, 5:60)
+#WHO <- WHO %>% gather(code, value, 5:60)
 ```
 
 ## Tidy Task 2:
 ```{r}
-WHO <- WHO %>% separate(code, into = c("new", "var", "sex"), sep = "_")
-WHO <- WHO %>% separate(sex, into = c("sex","age"), sep = 1)
+#WHO <- WHO %>% separate(code, into = c("new", "var", "sex"), sep = "_")
+#WHO <- WHO %>% separate(sex, into = c("sex","age"), sep = 1)
 ```
 
 ## Tidy Task 3:
 ```{r}
-WHO <- WHO %>% spread(var, value)
+#WHO <- WHO %>% spread(var, value)
 ```
 
 ## Tidy Task 4: 
 ```{r}
-WHO <- WHO %>% mutate(age = factor(age, levels=c("014","1524","2534","3544","4554","5564","65"), labels=c("<15","15-24","25-34","35-44","45-54","55-64","65>="), ordered=TRUE))
-WHO <- WHO %>% mutate(sex = factor(sex))
+#WHO <- WHO %>% mutate(age = factor(age, levels=c("014","1524","2534","3544","4554","5564","65"), labels=c("<15","15-24","25-34","35-44","45-54","55-64","65>="), ordered=TRUE))
+#WHO <- WHO %>% mutate(sex = factor(sex))
 ```
 
 ## Task 5: Filter & Select
 Drop the redundant columns `iso2` and `new`, and filter any three countries from the tidy version of the WHO data set. Name this subset of the data frame as `WHO_subset`.
 
 ```{r}
-WHO_subset <- WHO %>% filter(country %in% c("Afghanistan", "Albania", "Algeria")) %>% select(-(iso2),-(new))
+#WHO_subset <- WHO %>% filter(country %in% c("Afghanistan", "Albania", "Algeria")) %>% select(-(iso2),-(new))
 ```
 
 
@@ -129,15 +129,13 @@ DS <- subset(surveys_combined, surveys_combined$species_id == "DS")
 str(DS)
 ```
 
-
 ```{r}
 # Create a vector of NAs
-is.na(DS$hindfoot_length)
+#is.na(DS$hindfoot_length)
 
-mean(x, na.rm = TRUE)
+#mean(x, na.rm = TRUE)
 
 ```
-
 
 ```{r}
 DS$month <- factor(DS$month)
@@ -169,16 +167,9 @@ kable(DS_HFLenghtByMonth, col.names = c('Month', 'Average Hindfoot Length'), ali
   column_spec(2, width = "10em")
 ```
 
-
-
-
 ```{r}
-
-```
-
-```{r}
-month1 <- subset(DS, DS$month == "1")
-mean(month1$hindfoot_length, na.rm = TRUE)
+#month1 <- subset(DS, DS$month == "1")
+#mean(month1$hindfoot_length, na.rm = TRUE)
 ```
 
 ## Task 8: Missing Values
@@ -186,16 +177,85 @@ mean(month1$hindfoot_length, na.rm = TRUE)
 Select one of the years in the `surveys_combined` data frame, rename this data set as `surveys_combined_year`. Using `surveys_combined_year` data frame, find the total missing values in `weight` column grouped by `species`. Replace the missing values in `weight` column with the mean values of each species. Save this imputed data as `surveys_weight_imputed`.
 
 ```{r}
-# This is a chunk for Task 8. Provide your R codes here: 
-
-
-
-
-
+surveys_combined$year <- factor(surveys_combined$year)
 ```
 
+```{r}
+str(surveys_combined$year)
+```
 
+```{r}
+# This is a chunk for Task 8. Provide your R codes here: 
+# Choose 1988 (my year of birth)
+surveys_combined_year <- subset(surveys_combined, surveys_combined$year == "1988")
+```
 
+```{r}
+str(surveys_combined_year)
+```
+
+```{r}
+# Check the species ID
+unique(surveys_combined_year$species_id)
+```
+
+```{r}
+surveys_combined_AS_check <- subset(surveys_combined, surveys_combined$species_id == "AS")
+surveys_combined_AS_check
+```
+
+```{r}
+na_count <- sapply(surveys_combined_year$weight, function(y) sum(length(which(is.na(y)))))
+surveys_combined_year$WeightNA <- na_count
+```
+
+```{r}
+weight_by_species <- aggregate(WeightNA ~ species_id, surveys_combined_year, FUN = length)
+```
+
+```{r}
+kable(weight_by_species, col.names = c('Species ID (1988)', 'Number of NA Weight Values'), 
+      align = rep('c')) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+  column_spec(1, bold = TRUE, border_right = TRUE, width = "8em") %>%
+  column_spec(2, width = "8em")
+```
+
+### Determine the mean values
+
+```{r}
+surveys_combined_year %>% group_by(species_id)
+```
+
+```{r}
+average_by_species_year <- aggregate(surveys_combined_year$weight ~ species_id, 
+                                     surveys_combined_year, mean, na.action = na.omit)
+```
+
+```{r}
+average_by_species_year
+```
+
+```{r}
+# Create a vector with the missing values
+weight_vector_1988 <- is.na(surveys_combined_year$weight)
+
+library(Hmisc)
+x1 <- impute(surveys_combined_year$weight, fun = mean)
+x1
+
+#x[is.na(x)] <- mean(x, na.rm = TRUE)
+```
+
+https://stackoverflow.com/questions/24027605/determine-the-number-of-na-values-in-a-column
+https://stackoverflow.com/questions/41862359/count-number-of-values-in-r/41862739
+https://stackoverflow.com/questions/25835643/replace-missing-values-with-column-mean
+https://stackoverflow.com/questions/9322773/how-to-replace-na-with-mean-by-subset-in-r-impute-with-plyr
+https://stackoverflow.com/questions/41530007/dplyrmutate-assign-na-rm-true
+https://idc9.github.io/stor390/notes/dplyr/dplyr.html#dataset
+https://nicercode.github.io/guides/repeating-things/
+https://stackoverflow.com/questions/18721012/create-data-table-listing-values-of-one-variable-grouped-by-another-variable
+http://garrettgman.github.io/tidying/
 
 
 ## Task 9: Inconsistencies or Special Values
