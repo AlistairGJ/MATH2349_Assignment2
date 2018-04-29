@@ -6,6 +6,10 @@ output:
   html_notebook: default
 ---
 
+<style>
+body {
+text-align: justify}
+</style>
 
 
 ## Setup
@@ -56,8 +60,6 @@ Drop the redundant columns `iso2` and `new`, and filter any three countries from
 #WHO_subset <- WHO %>% filter(country %in% c("Afghanistan", "Albania", "Algeria")) %>% select(-(iso2),-(new))
 ```
 
-
-
 ## Read Species and Surveys data sets
 
 Read the Species and Surveys data sets using an appropriate function. Name these data frames as `species` and `surveys`, respectively.
@@ -71,30 +73,29 @@ library(knitr)
 options(knitr.table.format = "html")
 ```
 
-```{r}
+```{r, message=FALSE, eval=FALSE}
 # This is an R chunk for reading the Species and Surveys data sets. Provide your R codes here:
 species <- read_csv("species.csv")
 surveys <- read_csv("surveys.csv")
 ```
 
-Message: Parsed with column specification ??? (meaning?)
-
 ## Task 6: Join
 
-### Exploring the Data
-```{r}
-dim(species)
-```
-```{r}
-dim(surveys)
-```
+### Checking the imported data
+
 ```{r}
 str(species)
+```
+
+```{r}
 summary(species)
 ```
 
 ```{r}
 str(surveys)
+```
+
+```{r}
 summary(surveys)
 ```
 
@@ -110,66 +111,58 @@ surveys_combined <- full_join(species, surveys, by = "species_id")
 Using the `surveys_combined` data frame, calculate the average weight and hindfoot length of one of the species observed in each month (irrespective of the year). Make sure to exclude missing values while calculating the average.
 
 ```{r}
-# This is a chunk for Task 7. Provide your R codes here: 
-
-```
-
-```{r}
 # Check the species ID
 unique(surveys_combined$species_id)
 ```
 
+Species ID 'DS' was randomely selected for the next part.
+
 ```{r}
-# Randomly choose DS
-# Made this into a dataset
+# Make a new data set by filtering for DS
 DS <- subset(surveys_combined, surveys_combined$species_id == "DS")
 ```
 
 ```{r}
+# Check the structure
 str(DS)
 ```
 
-```{r}
-# Create a vector of NAs
-#is.na(DS$hindfoot_length)
-
-#mean(x, na.rm = TRUE)
-
-```
+Convert month into a factor.
 
 ```{r}
+# Converting into a factor
 DS$month <- factor(DS$month)
 ```
 
 ```{r}
+# Checking the conversion
 str(DS$month)
 ```
 
 ```{r}
+# Calculate the averge weight of DS in each month, excluding NA
 DS_WeightByMonth <- aggregate(DS$weight ~ month, DS, mean, na.action = na.omit)
 ```
 
 ```{r}
-kable(DS_WeightByMonth, col.names = c('Month', 'Average Weight'), align = rep('c')) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+# Output the results
+kable(DS_WeightByMonth, col.names = c('Month', 'Average Weight of DS'), align = rep('c')) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, "condensed") %>%
   column_spec(1, bold = TRUE, border_right = TRUE, width = "5em") %>%
   column_spec(2, width = "10em")
 ```
 
 ```{r}
-DS_HFLenghtByMonth <- aggregate(DS$hindfoot_length ~ month, DS, mean, na.action = na.omit)
+# Calculate the averge weight of DS in each month, excluding NA
+DS_HFLengthByMonth <- aggregate(DS$hindfoot_length ~ month, DS, mean, na.action = na.omit)
 ```
 
 ```{r}
-kable(DS_HFLenghtByMonth, col.names = c('Month', 'Average Hindfoot Length'), align = rep('c')) %>%
-  kable_styling(bootstrap_options = "striped", full_width = F, position = "left") %>%
+kable(DS_HFLengthByMonth, col.names = c('Month', 'Average Hindfoot Length of DS'), 
+      align = rep('c')) %>%
+  kable_styling(bootstrap_options = "striped", full_width = F, "condensed") %>%
   column_spec(1, bold = TRUE, border_right = TRUE, width = "5em") %>%
   column_spec(2, width = "10em")
-```
-
-```{r}
-#month1 <- subset(DS, DS$month == "1")
-#mean(month1$hindfoot_length, na.rm = TRUE)
 ```
 
 ## Task 8: Missing Values
@@ -224,7 +217,8 @@ kable(weight_by_species, col.names = c('Species ID (1988)', 'Number of NA Weight
 ### Determine the mean values
 
 ```{r}
-surveys_combined_year %>% group_by(species_id)
+# surveys_combined_year %>% group_by(species_id)
+# This doesn't do anything right now ...
 ```
 
 ```{r}
@@ -240,9 +234,6 @@ average_by_species_year
 # Create a vector with the missing values
 weight_vector_1988 <- is.na(surveys_combined_year$weight)
 
-library(Hmisc)
-x1 <- impute(surveys_combined_year$weight, fun = mean)
-x1
 
 #x[is.na(x)] <- mean(x, na.rm = TRUE)
 ```
@@ -257,13 +248,22 @@ https://nicercode.github.io/guides/repeating-things/
 https://stackoverflow.com/questions/18721012/create-data-table-listing-values-of-one-variable-grouped-by-another-variable
 http://garrettgman.github.io/tidying/
 
+```{r}
+# Column rename
+names(average_by_species_year) <- c("species_id", "weight")
+
+join <- left_join(surveys_combined_year, average_by_species_year, by = "species_id") %>%
+  mutate(weight = ifelse(is.na(weight.x), weight.y, weight.x)) %>% 
+  select(-weight.y, -weight.x)
+```
+
+
 
 ## Task 9: Inconsistencies or Special Values
 
 Inspect the `weight` column in `surveys_weight_imputed` data frame for any further inconsistencies or special values (i.e., NaN, Inf, -Inf) . Trace back and explain briefly why you got such a value.
 
 ```{r}
-
 # This is a chunk for Task 9. Provide your R codes here: 
 
 
@@ -277,7 +277,6 @@ Inspect the `weight` column in `surveys_weight_imputed` data frame for any furth
 Using the `surveys_combined` data frame, inspect the variable hindfoot length for possible univariate outliers. If you detect any outliers use any of the methods outlined in the Module 6 notes to deal with them. Explain briefly the actions that you take to handle outliers. 
 
 ```{r}
-
 # This is a chunk for Task 10. Provide your R codes here: 
 
 
@@ -294,6 +293,11 @@ DS$year <- factor(DS$year)
 
 ```{r}
 str(DS$year)
+
+# Create a vector with the missing values
+weight_vector_1988 <- is.na(surveys_combined_year$weight)
+
+
 ```
 
 
