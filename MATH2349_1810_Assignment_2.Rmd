@@ -3,6 +3,8 @@ title: "MATH2349 Semester 1, 2018"
 author: "Chris Kaias s3090801 & Alistair Grevis-James s3644119"
 subtitle: Assignment 2
 output:
+  html_document:
+    df_print: paged
   html_notebook: default
 ---
 
@@ -296,7 +298,7 @@ sum(is.finite(surveys_weight_imputed$weight))
 str(surveys_weight_imputed$weight)
 ```
 
-The `surveys_weight_imputed` still contains NA values because for these species every value for `weight` 
+The `surveys_weight_imputed` still contains NA values because for these species every value for `weight` from the selected year was NA to begin with. This means that they couldn't be filled with a mean, as a mean could not be generated. All the other checks above gave expected results.
 
 ## Task 10: Outliers
 
