@@ -27,7 +27,7 @@ library(tidyr)
 library(dplyr)
 library(kableExtra)
 library(knitr)
-##library(Hmisc)
+library(Hmisc)
 library(outliers)
 ```
 
